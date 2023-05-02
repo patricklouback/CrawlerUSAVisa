@@ -1,0 +1,10 @@
+class xpath:
+    USER_EMAIL = '//*[@id="user_email"]'
+    USER_PASSWORD = '//*[@id="user_password"]'
+    POLICY_CONFIRMED = '//*[@id="sign_in_form"]/div[3]/label/div'
+    ENTER_LOGIN = '//*[@id="sign_in_form"]/p[1]/input'
+    CONTINUE = '//*[@id="main"]/div[2]/div[2]/div[1]/div/div/div[1]/div[2]/ul/li/a'
+    SCHEDULE_LIST = '//*[@id="forms"]/ul/li[4]'
+    SCHEDULE_BTN = '//*[@id="4yvtu6-accordion"]/div/div[2]/p[2]/a'
+    CONTINUE_1 = '//*[@id="main"]/div[3]/form/div[2]/div/input'
+    DATE_APPOINTMENT = '//*[@id="appointments_consulate_appointment_date"]'
