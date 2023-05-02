@@ -1,5 +1,4 @@
 # CrawlerUSAVisa
-Robô Crawler em Python com Selenium e BeautifulSoup para agendamento de visto no Consulado Americano. Automatize seu processo de agendamento e antecipe sua viagem aos EUA.
 
 Robô Crawler para Agendamento de Visto no Consulado Americano
 Este é um projeto de robô crawler em Python com Selenium e BeautifulSoup para automatizar o processo de agendamento de visto no Consulado Americano.
