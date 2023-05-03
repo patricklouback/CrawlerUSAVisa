@@ -1,4 +1,5 @@
 class xpath:
+    TITLE = '//*[@id="main"]/div[2]'
     USER_EMAIL = '//*[@id="user_email"]'
     USER_PASSWORD = '//*[@id="user_password"]'
     POLICY_CONFIRMED = '//*[@id="sign_in_form"]/div[3]/label/div'

@@ -1,9 +1,38 @@
+import time
+import json
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from datetime import datetime
+
+from main import crawler
+
+def wait_for_beginning(driver):
+    print('entrei na função de wait')
+    time.sleep(5)
+    print('passou 5 seg')
+
+    try:
+        driver.find_element(By.XPATH, '//*[@id="main"]/div[2]')
+        print("O elemento existe na página")
+    except NoSuchElementException:
+        print("O elemento não existe na página")
+        driver.quit()
+        time.sleep(2)
+        crawler()
+
+
+    # try:
+    #     WebDriverWait(driver, 30).until(EC.title_contains(""))
+    #     print("A página carregou com sucesso!")
+    # except TimeoutException:
+    #     print("A página não carregou em 30 segundos. Tentando novamente...")
+    #     driver.quit()
+    #     time.sleep(2)
+    #     crawler()
 
 def wait_for_page_to_load(driver):
     wait = WebDriverWait(driver, 30)
@@ -61,3 +90,18 @@ def find_first_available_day(driver, xpath_table, xpath_month, xpath_year):
         return first_available_day
     else:
         return first_available_day + '/' + month + '/' + year
+
+def save_data(data):
+    # Lê os dados existentes do arquivo JSON
+    try:
+        with open('data.json', 'r') as f:
+            existing_data = json.load(f)
+    except FileNotFoundError:
+        existing_data = []
+
+    # Adiciona a nova data aos dados existentes
+    existing_data.append(data)
+
+    # Grava os dados atualizados no arquivo JSON
+    with open('data.json', 'w') as f:
+        json.dump(existing_data, f, indent=4)

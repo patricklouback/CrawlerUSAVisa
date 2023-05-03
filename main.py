@@ -1,8 +1,6 @@
+import sys
 import time
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from bs4 import BeautifulSoup
 
 from interactions import *
 from xpath import xpath
@@ -12,17 +10,27 @@ import os
 
 load_dotenv()
 
-
 email = os.environ.get('EMAIL')
 password = os.environ.get('PASSWORD')
 
+def crawler(attempts = 0):
 
-def crawler():
+    if attempts >= 2:
+        print("Verifique sua conexão")
+        sys.exit()
+
     url_base = 'https://ais.usvisa-info.com'
     url = 'https://ais.usvisa-info.com/pt-br/niv/users/sign_in'
     driver = webdriver.Chrome()
     driver.maximize_window()
-    driver.get(url)
+    driver.set_page_load_timeout(30)
+
+    try:
+        driver.get(url)
+    except:
+        print('A página não carregou')
+        driver.quit()
+        crawler(attempts + 1)
 
     # Inserindo E-mail e Senha
     write_element(driver, xpath.USER_EMAIL, email)
@@ -53,12 +61,8 @@ def crawler():
     time.sleep(0.2)
 
     day_table = find_first_available_day(driver, xpath.TABLE_PART_1, xpath.MONTH_DIV_1, xpath.YEAR_DIV_1)
-    print('Table 1',day_table)
-    print(type(day_table))
 
     day_table = find_first_available_day(driver, xpath.TABLE_PART_2, xpath.MONTH_DIV_2, xpath.YEAR_DIV_2)
-    print('Table 2',day_table)
-    print(type(day_table))
 
     day_table = None
 
@@ -66,14 +70,12 @@ def crawler():
         click_element(driver, xpath.NEXT_CALENDAR)
         time.sleep(0.2)
         day_table = find_first_available_day(driver, xpath.TABLE_PART_2, xpath.MONTH_DIV_2, xpath.YEAR_DIV_2)
-        print('Table 2',day_table)
-        print(type(day_table))
 
-
-
-    time.sleep(5)
+    time.sleep(0.2)
 
     driver.quit()
+
+    save_data(day_table)
 
 if __name__ == '__main__':
     crawler()
