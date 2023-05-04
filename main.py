@@ -75,7 +75,7 @@ def crawler(attempts = 0):
 
     driver.quit()
 
-    save_data(day_table)
+    save_date(day_table)
 
 if __name__ == '__main__':
     crawler()
