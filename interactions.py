@@ -91,7 +91,6 @@ def find_first_available_day(driver, xpath_table, xpath_month, xpath_year):
     else:
         return first_available_day + '/' + month + '/' + year
 
-
 def save_date(date):
     # Formata data
     f_date = format_date(date)
@@ -116,34 +115,3 @@ def save_date(date):
     # Grava os dados atualizados no arquivo JSON
     with open('data.json', 'w') as f:
         json.dump(existing_data, f, indent=4)
-
-# def save_date(date):
-#     # Formata data
-#     f_date = format_date(date)
-
-#     # Cria um Discionário
-#     now = datetime.now()
-
-#     new_date = {
-#         "Instante_da_Coleta": now.strftime("%d/%m/%Y %H:%M:%S"),
-#         "Data_Disponivel": f_date
-#     }
-
-#     # Lê os dados existentes do arquivo JSON
-#     try:
-#         with open('data.json', 'r') as f:
-#             existing_data = json.load(f)
-#     except FileNotFoundError:
-#         existing_data = []
-
-#     # Adiciona a nova data aos dados existentes
-#     existing_data.append(new_date)
-
-#     # Grava os dados atualizados no arquivo JSON
-#     with open('data.json', 'w') as f:
-#         json.dump(existing_data, f, indent=4)
-
-def format_date(date):
-    dt = datetime.strptime(date, '%d/%B/%Y')
-    result = dt.strftime('%d/%m/%Y')
-    return result
