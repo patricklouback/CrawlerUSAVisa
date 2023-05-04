@@ -115,3 +115,8 @@ def save_date(date):
     # Grava os dados atualizados no arquivo JSON
     with open('data.json', 'w') as f:
         json.dump(existing_data, f, indent=4)
+
+def format_date(date):
+    dt = datetime.strptime(date, '%d/%B/%Y')
+    result = dt.strftime('%d/%m/%Y')
+    return result

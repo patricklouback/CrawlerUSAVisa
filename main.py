@@ -1,6 +1,7 @@
 import sys
 import time
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 from interactions import *
 from xpath import xpath
@@ -21,7 +22,7 @@ def crawler(attempts = 0):
 
     url_base = 'https://ais.usvisa-info.com'
     url = 'https://ais.usvisa-info.com/pt-br/niv/users/sign_in'
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     driver.maximize_window()
     driver.set_page_load_timeout(30)
 
