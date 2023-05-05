@@ -1,6 +1,7 @@
 import sys
 import time
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 from interactions import *
@@ -14,15 +15,16 @@ load_dotenv()
 email = os.environ.get('EMAIL')
 password = os.environ.get('PASSWORD')
 
-def crawler(attempts = 0):
 
+def crawler(attempts=0):
     if attempts >= 2:
         print("Verifique sua conexão")
         sys.exit()
 
     url_base = 'https://ais.usvisa-info.com'
     url = 'https://ais.usvisa-info.com/pt-br/niv/users/sign_in'
-    driver = webdriver.Chrome(ChromeDriverManager().install())
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service)
     driver.maximize_window()
     driver.set_page_load_timeout(30)
 
@@ -61,24 +63,23 @@ def crawler(attempts = 0):
     click_element(driver, xpath.DATE_APPOINTMENT)
     time.sleep(0.2)
 
-    day_table = find_first_available_day(driver, xpath.TABLE_PART_1, xpath.MONTH_DIV_1, xpath.YEAR_DIV_1)
+    day_table_1 = find_first_available_day(driver, xpath.TABLE_PART_1, xpath.MONTH_DIV_1, xpath.YEAR_DIV_1)
 
-    day_table = find_first_available_day(driver, xpath.TABLE_PART_2, xpath.MONTH_DIV_2, xpath.YEAR_DIV_2)
-
-    day_table = None
-
-    while day_table == None:
-        click_element(driver, xpath.NEXT_CALENDAR)
-        time.sleep(0.2)
+    if day_table_1 is None:
         day_table = find_first_available_day(driver, xpath.TABLE_PART_2, xpath.MONTH_DIV_2, xpath.YEAR_DIV_2)
 
-    time.sleep(0.2)
+        while day_table is None:
+            click_element(driver, xpath.NEXT_CALENDAR)
+            time.sleep(0.2)
+            day_table = find_first_available_day(driver, xpath.TABLE_PART_2, xpath.MONTH_DIV_2, xpath.YEAR_DIV_2)
+
+        time.sleep(0.2)
+        save_date(day_table)
+    else:
+        save_date(day_table_1)
 
     driver.quit()
 
-    save_date(day_table)
 
 if __name__ == '__main__':
     crawler()
-
-

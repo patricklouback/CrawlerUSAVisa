@@ -1,43 +1,17 @@
-import time
 import json
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from datetime import datetime
 
-from main import crawler
-
-def wait_for_beginning(driver):
-    print('entrei na função de wait')
-    time.sleep(5)
-    print('passou 5 seg')
-
-    try:
-        driver.find_element(By.XPATH, '//*[@id="main"]/div[2]')
-        print("O elemento existe na página")
-    except NoSuchElementException:
-        print("O elemento não existe na página")
-        driver.quit()
-        time.sleep(2)
-        crawler()
-
-
-    # try:
-    #     WebDriverWait(driver, 30).until(EC.title_contains(""))
-    #     print("A página carregou com sucesso!")
-    # except TimeoutException:
-    #     print("A página não carregou em 30 segundos. Tentando novamente...")
-    #     driver.quit()
-    #     time.sleep(2)
-    #     crawler()
 
 def wait_for_page_to_load(driver):
     wait = WebDriverWait(driver, 30)
     wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
     wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
+
 
 def wait_for_element_presence(driver, xpath, timeout=30):
     try:
@@ -46,10 +20,12 @@ def wait_for_element_presence(driver, xpath, timeout=30):
     except TimeoutException:
         print(f"O elemento com xpath {xpath} não foi encontrado na página após {timeout} segundos de espera.")
 
+
 def click_element(driver, xpath):
     wait_for_page_to_load(driver)
     wait_for_element_presence(driver, xpath)
     driver.find_element(By.XPATH, xpath).click()
+
 
 def write_element(driver, xpath, msg):
     wait_for_page_to_load(driver)
@@ -57,20 +33,15 @@ def write_element(driver, xpath, msg):
     elem.clear()
     elem.send_keys(msg)
 
+
 def read_attribute(driver, attribute, tag, text_element):
     wait_for_page_to_load(driver)
     html = driver.page_source
     soup = BeautifulSoup(html, "html.parser")
-    element = soup.find(tag, string= text_element)
+    element = soup.find(tag, string=text_element)
     att = element[attribute]
     return att
 
-def read_element(driver, tag, class_element):
-    wait_for_page_to_load(driver)
-    html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
-    element = soup.find(tag, class_=class_element)
-    return element
 
 def find_first_available_day(driver, xpath_table, xpath_month, xpath_year):
     wait_for_page_to_load(driver)
@@ -85,11 +56,12 @@ def find_first_available_day(driver, xpath_table, xpath_month, xpath_year):
         if not day.get_attribute('class') or 'ui-state-disabled' not in day.get_attribute('class'):
             first_available_day = day.text
             break
-    
+
     if first_available_day is None:
         return first_available_day
     else:
         return first_available_day + '/' + month + '/' + year
+
 
 def save_date(date):
     # Formata data
@@ -115,6 +87,7 @@ def save_date(date):
     # Grava os dados atualizados no arquivo JSON
     with open('data.json', 'w') as f:
         json.dump(existing_data, f, indent=4)
+
 
 def format_date(date):
     dt = datetime.strptime(date, '%d/%B/%Y')
