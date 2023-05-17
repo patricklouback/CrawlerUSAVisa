@@ -3,6 +3,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 from interactions import *
 from xpath import xpath
@@ -15,15 +16,16 @@ load_dotenv()
 email = os.environ.get('EMAIL')
 password = os.environ.get('PASSWORD')
 
-
 def crawler(attempts=0):
     if attempts >= 2:
         print("Verifique sua conexão")
+        save_date_excel('erro')
         sys.exit()
 
     url_base = 'https://ais.usvisa-info.com'
     url = 'https://ais.usvisa-info.com/pt-br/niv/users/sign_in'
     service = Service(ChromeDriverManager().install())
+
     driver = webdriver.Chrome(service=service)
     driver.maximize_window()
     driver.set_page_load_timeout(30)
@@ -75,11 +77,16 @@ def crawler(attempts=0):
 
         time.sleep(0.2)
         save_date(day_table)
+        save_date_excel(day_table)
     else:
         save_date(day_table_1)
+        save_date_excel(day_table_1)
 
     driver.quit()
+    sys.exit()
 
 
 if __name__ == '__main__':
-    crawler()
+    while True:
+        crawler()
+        time.sleep(600)

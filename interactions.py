@@ -1,4 +1,8 @@
 import json
+import sys
+
+import openpyxl
+from openpyxl.styles import Font, Alignment
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,6 +23,8 @@ def wait_for_element_presence(driver, xpath, timeout=30):
         WebDriverWait(driver, timeout).until(element_present)
     except TimeoutException:
         print(f"O elemento com xpath {xpath} não foi encontrado na página após {timeout} segundos de espera.")
+        driver.quit()
+        sys.exit()
 
 
 def click_element(driver, xpath):
@@ -29,6 +35,7 @@ def click_element(driver, xpath):
 
 def write_element(driver, xpath, msg):
     wait_for_page_to_load(driver)
+    wait_for_element_presence(driver, xpath)
     elem = driver.find_element(By.XPATH, xpath)
     elem.clear()
     elem.send_keys(msg)
@@ -87,6 +94,54 @@ def save_date(date):
     # Grava os dados atualizados no arquivo JSON
     with open('data.json', 'w') as f:
         json.dump(existing_data, f, indent=4)
+
+
+def save_date_excel(date):
+    if date == 'erro':
+        f_date = 'A Página não carregou!'
+    else:
+        # Formata data
+        f_date = format_date(date)
+
+    # Abre a planilha existente
+    try:
+        wb = openpyxl.load_workbook(filename="data.xlsx")
+        sheet = wb.active
+    except FileNotFoundError:
+        # Se a planilha não existir, cria uma nova
+        wb = openpyxl.Workbook()
+        sheet = wb.active
+        sheet["A1"] = "Instante da Coleta"
+        sheet["B1"] = "Data Disponível"
+
+    # Encontra a última linha preenchida
+    last_row = sheet.max_row + 1
+
+    # Adiciona as datas à planilha
+    sheet.cell(row=last_row, column=1, value=datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+    sheet.cell(row=last_row, column=2, value=f_date)
+
+    # Define o estilo das células
+    sheet.column_dimensions['A'].width = 30
+    sheet.column_dimensions['B'].width = 20
+
+    title_font = Font(name='Arial', size=12, bold=True)
+    title_alignment = Alignment(horizontal='center', vertical='center')
+    data_alignment = Alignment(horizontal='center', vertical='center')
+
+    # Aplica estilo apenas para as células do título
+    for col in sheet.iter_cols(min_row=1, max_row=1, max_col=2):
+        for cell in col:
+            cell.font = title_font
+            cell.alignment = title_alignment
+
+    # Aplica estilo apenas para as células dos dados
+    for row in sheet.iter_rows(min_row=2, max_col=2):
+        for cell in row:
+            cell.alignment = data_alignment
+
+    # Salva a planilha
+    wb.save("data.xlsx")
 
 
 def format_date(date):
